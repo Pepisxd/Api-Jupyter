@@ -32,9 +32,24 @@ app.use("/api/chapters", chapterRoutes);
 app.use("/api/lessons", lessonRoutes);
 
 // Conectar a MongoDB
+console.log("Intentando conectar a MongoDB en:", MONGO_URI);
 mongoose
   .connect(MONGO_URI, {})
-  .then(() => console.log("MongoDB conectado"))
+  .then(() => {
+    console.log("MongoDB conectado");
+    console.log("Base de datos:", mongoose.connection.name);
+    console.log("Host:", mongoose.connection.host);
+    // Listar todas las colecciones
+    mongoose.connection.db
+      .listCollections()
+      .toArray()
+      .then((collections) => {
+        console.log("Colecciones en la base de datos:");
+        collections.forEach((collection) => {
+          console.log("- " + collection.name);
+        });
+      });
+  })
   .catch((err) => console.error("Error de conexión:", err));
 
 app.listen(PORT, () => {
